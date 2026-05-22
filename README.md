@@ -28,8 +28,14 @@ Clicking on a CA-issued block will copy the text and OP information of the targe
 </table>
 <br/><br/>
 
+## X (Twitter) OP Block Share Example
 
-## Implementation image of "OP card" that shows sender information using OP on X
+The following screenshot shows:
+
+- X shared article block
+- OGP-based OP Block Share page
+- OP/CAS verification overlay
+- Extended OGP metadata integration
 
 <table>
 <tr>
@@ -186,7 +192,14 @@ CA発行されたブロックをクリックすると、対象ブロックのテ
 </table>
 <br/><br/>
 
-## X上でOPによる発信者情報を示す「OPカード」の実装イメージ
+## X（Twitter）OPブロックシェア例
+
+以下のスクリーンショットは、以下の内容を示しています。
+
+- Xで共有した記事ブロック
+- OGPベースのOPブロック共有ページ
+- OP/CAS検証オーバーレイ
+- 拡張OGPメタデータ統合
 
 <table>
 <tr>
