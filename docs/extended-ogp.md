@@ -6,6 +6,9 @@
 This document describes the experimental extended OGP metadata
 used by the OP/CAS Chrome extension and WordPress CA Manager Extension.
 
+This approach is intended to coexist with existing OGP ecosystems,
+not to replace them.
+
 ## Goal
 To explore how OP/CAS authenticity metadata
 can coexist with existing OGP-based social sharing ecosystems.
@@ -58,6 +61,8 @@ extensions compatible with existing OGP ecosystems.
 ## 拡張OGPメタデータ（`og:op:*`）
 
 このドキュメントでは、OP/CAS Chrome拡張機能およびWordPress CA Manager拡張機能で使用される実験的な拡張OGPメタデータについて説明します。
+
+このアプローチは、既存のOGPエコシステムと共存することを目的としており、それらに取って代わるものではありません。
 
 ## 目的
 OP/CAS認証メタデータが既存のOGPベースのソーシャルシェアリングエコシステムとどのように共存できるかを検証する。
