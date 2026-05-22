@@ -89,6 +89,26 @@ OP Verification Overlay
 ```
 
 ---
+## OP Block Share Flow
+
+```mermaid
+flowchart TD
+
+A[WordPress Article]
+B[CA-issued Text Block]
+C[OP Block Share Page]
+D[Extended OGP Metadata<br/>og:op:*]
+E[X Share]
+F[Chrome Extension]
+G[OP/CAS Verification Overlay]
+
+A --> B
+B --> C
+C --> D
+D --> E
+E --> F
+F --> G
+```
 
 ## Extended OGP Metadata Example
 
@@ -213,6 +233,27 @@ OP検証オーバーレイ
 ```
 
 ---
+
+## OP Block Share Flow
+
+```mermaid
+flowchart TD
+
+A[WordPress Article]
+B[CA-issued Text Block]
+C[OP Block Share Page]
+D[Extended OGP Metadata<br/>og:op:*]
+E[X Share]
+F[Chrome Extension]
+G[OP/CAS Verification Overlay]
+
+A --> B
+B --> C
+C --> D
+D --> E
+E --> F
+F --> G
+```
 
 ## 拡張 OGP メタデータの例
 
