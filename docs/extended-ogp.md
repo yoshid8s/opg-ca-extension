@@ -58,6 +58,9 @@ This implementation also explores the possibility of future
 standardization approaches for authenticity-aware metadata
 extensions compatible with existing OGP ecosystems.
 
+This document describes an experimental implementation
+and does not represent an official specification.
+
 <a id="japanese"></a>
 
 # Japanese Version
@@ -107,3 +110,4 @@ X（Twitter）などの既存のOGP互換プラットフォームと共存する
 
 ## 今後の展望
 この実装は、既存のOGPエコシステムと互換性のある、真正性を考慮したメタデータ拡張のための、将来的な標準化アプローチの可能性も探っています。
+本ドキュメントは実験的な実装について説明するものであり、公式仕様ではありません。
