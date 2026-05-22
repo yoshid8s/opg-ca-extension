@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "OPG CA Viewer",
+  "version": "0.4",
+  "description": "Display OP metadata from OGP extension",
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://style.yh-inc.jp/*",
+        "https://x.com/*",
+        "https://twitter.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["style.css"]
+    }
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "permissions": [
+    "scripting"
+  ],
+
+  "host_permissions": [
+    "<all_urls>"
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "op-logo.png",
+        "yh_logo.png"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

@@ -1,0 +1,274 @@
+#opg-ca-card {
+
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+
+  width: 320px;
+
+  background: #ffffff;
+  border-radius: 12px;
+
+  box-shadow:
+    0 4px 20px rgba(0,0,0,0.15);
+
+  z-index: 999999;
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+
+  overflow: hidden;
+}
+
+.opg-header {
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 14px;
+}
+
+.opg-header.opg-verified {
+
+  background: linear-gradient(
+    90deg,
+    #0B1F4D 0%,
+    #102A56 100%
+  );
+
+  color: white;
+}
+
+.opg-header.opg-unverified {
+
+  background: #6B7280;
+  color: white;
+}
+
+.opg-header.opg-error {
+
+  background: #991B1B;
+  color: white;
+}
+
+.opg-logo {
+
+  width: 24px;
+  height: 24px;
+
+  padding: 2px;
+
+  border-radius: 6px;
+
+  background: white;
+
+  object-fit: contain;
+
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.15);
+}
+
+.opg-header-text {
+
+  font-size: 13px;
+  font-weight: 700;
+
+  letter-spacing: 0.2px;
+
+  color: #ffffff !important;
+}
+
+.opg-body {
+
+  padding: 16px;
+}
+
+.opg-title {
+
+  font-size: 18px;
+  font-weight: 700;
+
+  margin-bottom: 12px;
+
+  color: #111827;
+}
+
+.opg-item {
+
+  margin-bottom: 8px;
+
+  font-size: 14px;
+  color: #374151;
+}
+
+.opg-issuer {
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-bottom: 18px;
+}
+
+.opg-issuer-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  background: white;
+  object-fit: contain;
+  border: 1px solid #E5E7EB;
+  padding: 2px;
+}
+
+.opg-x-mini-card {
+  display: block;
+  width: auto;
+  margin: 10px 0 8px 0;
+  box-sizing: border-box;
+  clear: both;
+  flex-basis: 100%;
+
+  border: 1px solid #CFD9DE;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #ffffff;
+
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.opg-x-mini-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  background: #0B1F4D;
+  color: #ffffff;
+
+  padding: 8px 12px;
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.opg-x-mini-logo {
+  width: 22px;
+  height: 22px;
+
+  border-radius: 6px;
+  background: white;
+  object-fit: contain;
+}
+
+.opg-x-mini-body {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding: 12px 14px;
+
+  color: #0F172A;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.opg-x-mini-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.opg-x-mini-main strong {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.opg-x-mini-main span,
+.opg-x-mini-date {
+  color: #536471;
+}
+
+.opg-x-mini-date {
+  white-space: nowrap;
+}
+
+.opg-x-mini-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.opg-x-issuer-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  object-fit: contain;
+  background: #ffffff;
+  border: 1px solid #E5E7EB;
+  padding: 3px;
+}
+
+.opg-detected {
+  background: #6B7280 !important;
+  color: #ffffff !important;
+}
+
+.opg-validated {
+  background: #0B1F4D !important;
+  color: #ffffff !important;
+}
+
+.opg-verified {
+  background: #047857 !important;
+  color: #ffffff !important;
+}
+
+.opg-share-target {
+  cursor: pointer;
+  transition: background-color 0.15s ease, outline 0.15s ease;
+}
+
+.opg-share-target:hover {
+  outline: 2px dashed #0B1F4D;
+  outline-offset: 4px;
+  background: rgba(11, 31, 77, 0.04);
+}
+
+.opg-share-popup {
+  position: absolute;
+  z-index: 9999999;
+
+  max-width: 420px;
+
+  background: #ffffff;
+  border: 1px solid #CFD9DE;
+  border-radius: 14px;
+
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+
+  padding: 14px 16px;
+
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #0F172A;
+}
+
+.opg-share-title {
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.opg-share-url {
+  font-size: 13px;
+  color: #0B7285;
+  word-break: break-all;
+  margin-bottom: 6px;
+}
+
+.opg-share-note {
+  font-size: 13px;
+  color: #536471;
+}
+
