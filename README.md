@@ -72,20 +72,24 @@ Clicking on a CA-issued block will copy the text and OP information of the targe
 
 ## Architecture
 
-```text
-Article Page
-    ↓
-WordPress CA Manager
-    ↓
-OGP + og:op:* metadata
-    ↓
-X (Twitter) Share
-    ↓
-OP Block Share Page
-    ↓
-Chrome Extension
-    ↓
-OP Verification Overlay
+```mermaid
+flowchart TD
+
+A[Article Page]
+B[WordPress CA Manager]
+C[OGP + og:op:* metadata]
+D[X Twitter Share]
+E[OP Block Share Page]
+F[Chrome Extension]
+G[OP Verification Overlay]
+
+A --> B
+B --> C
+C --> D
+D --> E
+E --> F
+F --> G
+
 ```
 
 ---
@@ -109,6 +113,13 @@ D --> E
 E --> F
 F --> G
 ```
+
+## Example OP Block Share URL
+
+The WordPress CA Manager Extension automatically generates
+OP Block Share page URLs such as:
+
+<pre>https://style.yh-inc.jp/op-share/{hash}/</pre>
 
 ## Extended OGP Metadata Example
 
@@ -216,20 +227,24 @@ CA発行されたブロックをクリックすると、対象ブロックのテ
 
 ## アーキテクチャ
 
-```テキスト
-記事ページ
- ↓
-WordPress CA マネージャー
- ↓
-OGP + og:op:* メタデータ
- ↓
-X（ツイッター）シェア
- ↓
-OPブロック共有ページ
- ↓
-Chrome拡張機能
- ↓
-OP検証オーバーレイ
+```mermaid
+flowchart TD
+
+A[記事ページ]
+B[WordPress CA マネージャー]
+C[OGP + og:op:* メタデータ]
+D[X（ツイッター）シェア]
+E[OPブロック共有ページ]
+F[Chrome拡張機能]
+G[OP検証オーバーレイ]
+
+A --> B
+B --> C
+C --> D
+D --> E
+E --> F
+F --> G
+
 ```
 
 ---
@@ -255,6 +270,13 @@ E --> F
 F --> G
 ```
 
+## OP Block シェア URLの例
+
+WordPress CA Manager Extension により、
+以下のような OP Block Share URL が自動生成されます。
+
+<pre>https://style.yh-inc.jp/op-share/{hash}/</pre>
+
 ## 拡張 OGP メタデータの例
 
 ```html
@@ -262,7 +284,7 @@ F --> G
 <meta property="og:type" content="article">
 
 <meta property="og:op:issuer" content="dns:style.yh-inc.jp">
-<meta property="og:op:author" content="竹内良文">
+<meta property="og:op:author" content="竹内好文">
 <meta property="og:op:cas" content="https://example.com/cas/{id}">
 ```
 
