@@ -10,6 +10,13 @@ used by the OP/CAS Chrome extension and WordPress CA Manager Extension.
 To explore how OP/CAS authenticity metadata
 can coexist with existing OGP-based social sharing ecosystems.
 
+## What is an authenticity metadata ?
+Authenticity metadata includes the following information, which in OP is represented by properties such as [PA](https://docs.originator-profile.org/ja/opb/pa/) and [CA](https://docs.originator-profile.org/ja/opb/ca/).
+
+* publisher identity
+* Web site identity
+* author information etc.
+
 ## Concept
 Since existing SNS platforms can already automatically interpret OGP metadata and display it in browsers, I believe that extending OGP metadata for Open Graph Protocol (OP), demonstrating OP use cases, and seeing more websites implement them will lead to greater recognition of the value and necessity of OP, and ultimately, the standard display of OP metadata in browsers and other viewing software.
 
@@ -54,6 +61,14 @@ extensions compatible with existing OGP ecosystems.
 
 ## 目的
 OP/CAS認証メタデータが既存のOGPベースのソーシャルシェアリングエコシステムとどのように共存できるかを検証する。
+
+## 真正性メタデータとは？
+
+真正性メタデータには、OPでは[PA](https://docs.originator-profile.org/ja/opb/pa/)や[CA](https://docs.originator-profile.org/ja/opb/ca/)といったプロパティで表される以下の情報が含まれます。
+
+* 発行者情報
+* ウェブサイト情報
+* 著者情報など
 
 ## コンセプト
 既存のSNSプラットフォームは既にOGPメタデータを自動解釈でき、ブラウザなどで表示できるようになっていることから、OGPメタデータをOP向けに拡張し、OPでのユースケースを示し、それを実践するWebサイトが増えれば増えるほど、OPの価値や必要性が認められ、ブラウザなどの閲覧ソフトウェアで標準的にOPメタデータも表示できるようになると考えています。
