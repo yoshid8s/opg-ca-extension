@@ -81,26 +81,24 @@ The following screenshot shows:
 ```mermaid
 flowchart LR
 
-subgraph Publisher
-A[WordPress CA Manager]
-B[OP Block Share Page]
-C[Extended OGP Metadata]
+subgraph Publisher["Publisher Environment"]
+    A[WordPress<br/>CA Manager]
+    B[OP Block<br/>Share Page]
 end
 
-subgraph Social
-D[X / Social Platform]
+subgraph Social["Social Platform"]
+    C[X / OGP Share]
 end
 
-subgraph Client
-E[Chrome Extension]
-F[OP Verification Overlay]
+subgraph Client["Client Verification"]
+    D[Chrome Extension]
+    E[OP/CAS Overlay]
 end
 
 A --> B
 B --> C
 C --> D
 D --> E
-E --> F
 ```
 
 ---
@@ -248,26 +246,24 @@ CA発行されたブロックをクリックすると、対象ブロックのテ
 ```mermaid
 flowchart LR
 
-subgraph Publisher
-A[WordPress CA Manager]
-B[OP Block Share Page]
-C[Extended OGP Metadata]
+subgraph Publisher["Publisher Environment"]
+    A[WordPress<br/>CA Manager]
+    B[OP Block<br/>Share Page]
 end
 
-subgraph Social
-D[X / Social Platform]
+subgraph Social["Social Platform"]
+    C[X / OGP Share]
 end
 
-subgraph Client
-E[Chrome Extension]
-F[OP Verification Overlay]
+subgraph Client["Client Verification"]
+    D[Chrome Extension]
+    E[OP/CAS Overlay]
 end
 
 A --> B
 B --> C
 C --> D
 D --> E
-E --> F
 ```
 
 ---
