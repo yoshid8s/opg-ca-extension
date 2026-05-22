@@ -146,7 +146,10 @@ OP Block Share page URLs such as:
 ## Related Project
 
 * [WordPress CA Manager Extension](https://github.com/yoshid8s/ca-manager-extension)
+* [OP Block Share](https://github.com/yoshid8s/opg-ca-extension/releases/tag/v0.2.0-op-share)
+* Extended OGP metadata ( og:op:* )
 * [Originator Profile](https://docs.originator-profile.org/ja/)
+* [Content Attestation](https://github.com/originator-profile/docs.originator-profile.org/blob/main/docs/opb/ca.md)
 * [CA Playground](https://playground.originator-profile.org/#description/server-api-endpoint-list)
 
 ---
@@ -311,8 +314,11 @@ WordPress CA Manager Extension により、
 
 ## 関連プロジェクト
 
-* [WordPress CA マネージャー拡張機能](https://github.com/yoshid8s/ca-manager-extension)
+* [WordPress CA Manager Extension](https://github.com/yoshid8s/ca-manager-extension)
+* [OP Block Share](https://github.com/yoshid8s/opg-ca-extension/releases/tag/v0.2.0-op-share)
+* Extended OGP metadata ( og:op:* )
 * [Originator Profile](https://docs.originator-profile.org/ja/)
+* [Content Attestation](https://github.com/originator-profile/docs.originator-profile.org/blob/main/docs/opb/ca.md)
 * [CA Playground](https://playground.originator-profile.org/#description/server-api-endpoint-list)
 
 ---
