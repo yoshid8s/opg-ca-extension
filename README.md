@@ -79,23 +79,20 @@ The following screenshot shows:
 ## Architecture
 
 ```mermaid
-flowchart TD
+flowchart LR
 
-A[Article Page]
-B[WordPress CA Manager]
-C[OGP + og:op:* metadata]
-D[X Twitter Share]
-E[OP Block Share Page]
-F[Chrome Extension]
-G[OP Verification Overlay]
+A[WordPress CA Manager]
+B[OP Block Share Page]
+C[Extended OGP Metadata]
+D[X / Social Platform]
+E[Chrome Extension]
+F[OP Verification Overlay]
 
 A --> B
 B --> C
 C --> D
 D --> E
 E --> F
-F --> G
-
 ```
 
 ---
@@ -240,24 +237,23 @@ CA発行されたブロックをクリックすると、対象ブロックのテ
 
 ## アーキテクチャ
 
-```mermaid
-flowchart TD
+## Architecture
 
-A[記事ページ]
-B[WordPress CA マネージャー]
-C[OGP + og:op:* メタデータ]
-D[X（ツイッター）シェア]
-E[OPブロック共有ページ]
-F[Chrome拡張機能]
-G[OP検証オーバーレイ]
+```mermaid
+flowchart LR
+
+A[WordPress CA Manager]
+B[OP Block Share Page]
+C[Extended OGP Metadata]
+D[X / Social Platform]
+E[Chrome Extension]
+F[OP Verification Overlay]
 
 A --> B
 B --> C
 C --> D
 D --> E
 E --> F
-F --> G
-
 ```
 
 ---
