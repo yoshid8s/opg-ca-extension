@@ -1,7 +1,7 @@
 🇯🇵For Japanese readers:
 [Jump to Japanese version](#japanese)
 
-# OPG CA Extension
+# OGP CA Extension
 
 This Chrome extension displays OP/CAS authentication information on sender profile-enabled websites and social networking platforms like X.
 
@@ -176,7 +176,7 @@ This project is an experimental implementation intended to explore:
 
 # Japanese Version
 
-# OPG CA 機能拡張
+# OGP CA 機能拡張
 
 発信者プロファイル対応ウェブサイトやXなどのSNSプラットフォームでOP/CAS認証情報を表示するChrome拡張機能です。
 
