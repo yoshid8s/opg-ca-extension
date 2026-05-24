@@ -9,6 +9,11 @@ This extension is an experimental implementation exploring how
 OP/CAS authenticity metadata can coexist with existing
 OGP-based social sharing ecosystems such as X (Twitter).
 
+This extension allows you to share CA block text from a web page to an X post. If the text on X differs from the original text, the following message will be displayed:
+
+<img width="867" height="535" alt="image" src="https://github.com/user-attachments/assets/9dbf0215-be92-42c7-b57b-9061cb7a0d72" />
+
+<br/><br/>
 Currently, this extension does not implement the functionality for verifying information shared on X by a CA server; this feature will be implemented in the next version.
 
 The extension supports OP Block Share pages,
@@ -183,8 +188,11 @@ This project is an experimental implementation intended to explore:
 発信者プロファイル対応ウェブサイトやXなどのSNSプラットフォームでOP/CAS認証情報を表示するChrome拡張機能です。
 
 この拡張機能は、OP/CAS認証メタデータがX（Twitter）などの既存のOGPベースのソーシャルシェアリングエコシステムとどのように共存できるかを検証する実験的な実装です。
-現段階では、本拡張機能は、Xで共有された情報のCAサーバーによる検証機能は実装しておらず、次のバージョンでの実装となります。
+この拡張機能を利用すると、WebページのCAブロックテキストをXの投稿に共有した場合、もし、X上での文章がオリジナルの文章と異なる場合に、以下のようなメッセージが表示されます。
 
+<img width="867" height="535" alt="image" src="https://github.com/user-attachments/assets/9dbf0215-be92-42c7-b57b-9061cb7a0d72" />
+
+<br/><br/>
 この拡張機能は、OPブロックシェアページ、拡張OGPメタデータ（`og:op:*`）、およびWordPress CA Manager拡張機能によって生成されるOP/CAS認証オーバーレイをサポートしています。
 
 ## OP対応Webページでの実装イメージ
