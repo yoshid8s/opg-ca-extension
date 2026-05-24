@@ -4,6 +4,24 @@
 # OGP CA Extension
 
 This Chrome extension displays OP/CAS authentication information on sender profile-enabled websites and social networking platforms like X.
+This extension explores how OP/CAS provenance can be inherited across social sharing workflows.
+
+-------
+
+```mermaid
+flowchart TD
+
+        A["Web page"]
+        B["Block share"]
+        C["X post"]
+        D["OP provenance card"]
+        E["content comparison"]
+
+        A --> B --> C --> D --> E
+
+```
+
+------
 
 This extension is an experimental implementation exploring how
 OP/CAS authenticity metadata can coexist with existing
@@ -186,6 +204,24 @@ This project is an experimental implementation intended to explore:
 # OGP CA 機能拡張
 
 発信者プロファイル対応ウェブサイトやXなどのSNSプラットフォームでOP/CAS認証情報を表示するChrome拡張機能です。
+この拡張機能では、OP/CASの来歴情報をソーシャル共有ワークフロー全体でどのように継承できるかを検証します。
+
+-------
+
+```mermaid
+flowchart TD
+
+        A["Web page"]
+        B["Block share"]
+        C["X post"]
+        D["OP provenance card"]
+        E["content comparison"]
+
+        A --> B --> C --> D --> E
+
+```
+
+------
 
 この拡張機能は、OP/CAS認証メタデータがX（Twitter）などの既存のOGPベースのソーシャルシェアリングエコシステムとどのように共存できるかを検証する実験的な実装です。
 この拡張機能を利用すると、WebページのCAブロックテキストをXの投稿に共有した場合、もし、X上での文章がオリジナルの文章と異なる場合に、以下のようなメッセージが表示されます。
