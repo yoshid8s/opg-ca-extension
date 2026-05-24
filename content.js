@@ -268,7 +268,9 @@ function initXTimelineMode() {
 
         console.log('[OPG] Target URL:', targetUrl);
 
-        const opData = await fetchOpDataFromPage(targetUrl);
+        const tweetText = extractTweetMainText(tweet);
+        const opData = await fetchOpDataFromPage(targetUrl, tweetText);
+
         if (!opData) return;
 
         const miniCard = createXMiniCard(opData);
@@ -456,7 +458,7 @@ function findExpandedUrlFromTweet(tweet) {
   return 'https://' + match[0];
 }
 
-async function fetchOpDataFromPage(url) {
+async function fetchOpDataFromPage(url, tweetText = '') {
   if (url.includes('t.co')) {
   console.log('[OPG] t.co URL detected. Need expanded URL:', url);
   }
@@ -488,6 +490,12 @@ async function fetchOpDataFromPage(url) {
   const opCasMeta = doc.querySelector('meta[property="og:op:cas"]');
   const opMeta = doc.querySelector('meta[property="og:op"]');
 
+  const blockTextMeta = doc.querySelector('meta[property="og:op:block_text"]');
+  const blockHashMeta = doc.querySelector('meta[property="og:op:block_hash"]');
+
+  const originalBlockText = blockTextMeta?.content || '';
+  const originalBlockHash = blockHashMeta?.content || '';
+
   if (opCasMeta && opCasMeta.content) {
     const casRes = await fetchViaBackground(opCasMeta.content);
     const casJson = JSON.parse(casRes.text);
@@ -518,6 +526,8 @@ console.log('[OPG] JWT issuer:', payload.issuer);
 
     const isVerified = signatureVerified === true;
 
+    const comparison = compareSharedText(tweetText, originalBlockText, originalBlockHash);
+
     return {
         issuer: normalizeIssuer(payload.issuer),
         author: normalizeAuthor(subject.author),
@@ -525,7 +535,8 @@ console.log('[OPG] JWT issuer:', payload.issuer);
         updated: subject.dateModified || subject.updated || '-',
         verified: isVerified,
         status: isVerified ? 'verified' : 'validated',
-        logo: subject.logo || null
+        logo: subject.logo || null,
+        comparison: comparison
     };
   }
 
@@ -537,15 +548,19 @@ console.log('[OPG] JWT issuer:', payload.issuer);
 }
 
 function getStatusLabel(opData) {
+  if (opData.comparison && ['minor', 'changed'].includes(opData.comparison.type)) {
+    return 'OPによる内容変更検出';
+  }
+
   if (opData.verified === true) {
-    return 'OP Verified Origin';
+    return 'OPによる発信者実在性確認済みサイト';
   }
 
   if (opData.status === 'validated') {
-    return 'OP Validated Origin';
+    return 'OPによる発信者検証済みサイト';
   }
 
-  return 'OP Origin Detected';
+  return 'OPによる発信者情報検出';
 }
 
 function formatDateJa(value) {
@@ -558,6 +573,149 @@ function formatDateJa(value) {
   }
 
   return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+}
+
+function normalizeCompareText(text) {
+  return (text || '')
+    .replace(/https?:\/\/\S+/g, '')
+    .replace(/style\.yh-inc\.jp\/\S+/g, '')
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/[–—]/g, '-')
+    .replace(/　/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+async function hashTextBase64Url(text) {
+  const data = new TextEncoder().encode(text);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+
+  const bytes = Array.from(new Uint8Array(digest));
+  const binary = bytes.map((b) => String.fromCharCode(b)).join('');
+  const base64 = btoa(binary);
+
+  return base64
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/g, '');
+}
+
+function textSimilarity(a, b) {
+  const aa = tokenizeForSimilarity(a);
+  const bb = tokenizeForSimilarity(b);
+
+  if (!aa.length || !bb.length) return 0;
+
+  const setA = new Set(aa);
+  const setB = new Set(bb);
+
+  let common = 0;
+  setA.forEach((x) => {
+    if (setB.has(x)) common++;
+  });
+
+  return common / Math.max(setA.size, setB.size);
+}
+
+function detectMeaningFlip(a, b) {
+  const aa = normalizeCompareText(a).toLowerCase();
+  const bb = normalizeCompareText(b).toLowerCase();
+
+  const negativeWords = [
+    'not',
+    "n't",
+    'cannot',
+    "can't",
+    'never',
+    'no ',
+    'できません',
+    'できない',
+    'ない',
+    'ません',
+    '不可',
+    '否定'
+  ];
+
+  const aNeg = negativeWords.some((w) => aa.includes(w));
+  const bNeg = negativeWords.some((w) => bb.includes(w));
+
+  return aNeg !== bNeg;
+}
+
+function tokenizeForSimilarity(text) {
+  const normalized = normalizeCompareText(text).toLowerCase();
+
+  if (!normalized) return [];
+
+  // 英文・日本語混在でも動く簡易2-gram
+  const compact = normalized.replace(/\s+/g, '');
+
+  const tokens = [];
+  for (let i = 0; i < compact.length - 1; i++) {
+    tokens.push(compact.slice(i, i + 2));
+  }
+
+  return tokens;
+}
+
+function compareSharedText(tweetText, originalText, originalHash) {
+  const tweet = normalizeCompareText(tweetText);
+  const original = normalizeCompareText(originalText);
+
+  if (!tweet || !original) {
+    return {
+      type: 'unknown',
+      message: ''
+    };
+  }
+
+  if (tweet === original) {
+    return {
+      type: 'match',
+      message: 'この投稿内容は、上記発信者のWebページにあるものと同一で、文章の改ざんはされていないことが、OPにより確認できました。'
+    };
+  }
+
+  if (original.startsWith(tweet) || tweet.startsWith(original)) {
+    return {
+      type: 'truncated',
+      message: 'この投稿内容は、Xの文字数制限等により、文章の一部が省略または末尾が調整されています。'
+    };
+  }
+
+  const score = textSimilarity(tweet, original);
+  const meaningFlip = detectMeaningFlip(tweet, original);
+
+  if (meaningFlip && score >= 0.6) {
+    return {
+      type: 'changed',
+      message: 'この投稿内容は、オリジナルから変更されており、否定表現などにより文章の意味が変化している可能性があります。注意して原文を確認してください。'
+    };
+  }
+
+  if (score >= 0.75) {
+    return {
+      type: 'minor',
+      message: 'この投稿内容は、オリジナルから変更されていますが、文章の意味改変は軽微です。原文を確認してください。'
+    };
+  }
+
+  return {
+    type: 'changed',
+    message: 'この投稿内容は、オリジナルから変更されており、文章の意味が変化している可能性があります。注意して原文を確認してください。'
+  };
+}
+
+function extractTweetMainText(tweet) {
+  const tweetTextEl = tweet.querySelector('[data-testid="tweetText"]');
+
+  let text = tweetTextEl
+    ? tweetTextEl.innerText
+    : tweet.innerText || '';
+
+  return normalizeCompareText(text);
 }
 
 function createXMiniCard(opData) {
@@ -599,6 +757,12 @@ function createXMiniCard(opData) {
         公開日: ${formatDateJa(opData.published)}
       </div>
     </div>
+
+    ${opData.comparison?.message ? `
+      <div class="opg-x-compare-message opg-x-compare-${opData.comparison.type}">
+        ${opData.comparison.message}
+      </div>
+    ` : ''}
   `;
 
   return card;

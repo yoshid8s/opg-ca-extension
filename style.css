@@ -272,3 +272,27 @@
   color: #536471;
 }
 
+.opg-x-compare-message {
+  border-top: 1px solid #E5E7EB;
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #374151;
+  background: #ffffff;
+}
+
+.opg-x-compare-match {
+  background: #F0FDF4;
+}
+
+.opg-x-compare-truncated {
+  background: #EFF6FF;
+}
+
+.opg-x-compare-minor {
+  background: #FFFBEB;
+}
+
+.opg-x-compare-changed {
+  background: #FEF2F2;
+}
