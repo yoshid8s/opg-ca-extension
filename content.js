@@ -224,6 +224,28 @@ function normalizeIssuer(issuer) {
     `;
 
     document.body.appendChild(card);
+
+    const toggle = document.createElement('button');
+    toggle.id = 'opg-ca-toggle';
+    toggle.innerHTML = `<img src="${logoUrl}" alt="OP">`;
+
+    document.body.appendChild(toggle);
+
+    toggle.addEventListener('click', () => {
+      const collapsed = card.classList.toggle('opg-collapsed');
+
+      if (collapsed) {
+        toggle.classList.add('opg-toggle-visible');
+      } else {
+        toggle.classList.remove('opg-toggle-visible');
+      }
+    });
+
+    setTimeout(() => {
+      card.classList.add('opg-collapsed');
+      toggle.classList.add('opg-toggle-visible');
+    }, 5000);
+
   }
 
 function initXTimelineMode() {
