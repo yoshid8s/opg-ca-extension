@@ -7,9 +7,8 @@
   "content_scripts": [
     {
       "matches": [
-        "https://style.yh-inc.jp/*",
-        "https://x.com/*",
-        "https://twitter.com/*"
+        "https://*/*",
+        "http://*/*"
       ],
       "js": ["content.js"],
       "css": ["style.css"]

@@ -336,3 +336,39 @@
 #opg-ca-toggle.opg-toggle-visible {
   display: flex;
 }
+
+.opg-share-target {
+  position: relative;
+}
+
+.opg-share-target::after {
+  content: "クリックでXに共有";
+  position: absolute;
+  right: 12px;
+  top: -38px;
+
+  background: #0B1F4D;
+  color: #ffffff;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  padding: 8px 12px;
+  border-radius: 999px;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+
+  transition: opacity 0.15s ease, transform 0.15s ease;
+
+  z-index: 999999;
+  white-space: nowrap;
+}
+
+.opg-share-target:hover::after {
+  opacity: 1;
+  transform: translateY(0);
+}

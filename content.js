@@ -7,14 +7,21 @@
         return;
     }
 
-    const isStyleSite = location.hostname === 'style.yh-inc.jp';
+    const hasOpMeta =
+      document.querySelector('meta[property="og:op"]') ||
+      document.querySelector('meta[property="og:op:cas"]');
 
-    if (isStyleSite) {
-        initBlockShareMode();
-    }
+    if (hasOpMeta) {
+      initBlockShareMode();
+    } 
 
   const opMeta = document.querySelector('meta[property="og:op"]');
   const opCasMeta = document.querySelector('meta[property="og:op:cas"]');
+
+  const casUrl = opCasMeta?.content || '';
+
+  const postIdMatch = casUrl.match(/\/cas\/(\d+)_cas\.json/);
+  const postId = postIdMatch ? postIdMatch[1] : '';
 
   let opData = null;
 
@@ -263,14 +270,18 @@ function initXTimelineMode() {
       const links = Array.from(tweet.querySelectorAll('a[href]'));
 
       const link = links.find((a) => {
-        const href = a.href || '';
-        const text = a.textContent || '';
-        return (
-          href.includes('style.yh-inc.jp') ||
-          text.includes('style.yh-inc.jp') ||
-          href.includes('t.co')
-        );
-      });
+      const href = a.href || '';
+
+      if (!href.startsWith('http')) {
+        return false;
+      }
+
+      if (href.includes('x.com') || href.includes('twitter.com')) {
+        return false;
+      }
+
+      return true;
+    });
 
       if (!link) return;
 
@@ -284,9 +295,7 @@ function initXTimelineMode() {
       pendingUrls.add(processKey);
 
       try {
-        const targetUrl =
-          findExpandedUrlFromTweet(tweet) ||
-          href;
+        const targetUrl = href;
 
         console.log('[OPG] Target URL:', targetUrl);
 
@@ -471,13 +480,17 @@ async function verifyJwtSignature(jwt, publicJwk) {
 function findExpandedUrlFromTweet(tweet) {
   const text = tweet.innerText || '';
 
-  const match = text.match(/style\.yh-inc\.jp\/(?:op-share|share)\/[a-zA-Z0-9_-]+/);
-
-  if (!match) {
-    return null;
+  const httpsMatch = text.match(/https?:\/\/[^\s]+/);
+  if (httpsMatch) {
+    return httpsMatch[0];
   }
 
-  return 'https://' + match[0];
+  const domainMatch = text.match(/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\/[^\s]*)?/);
+  if (domainMatch) {
+    return 'https://' + domainMatch[0];
+  }
+
+  return null;
 }
 
 async function fetchOpDataFromPage(url, tweetText = '') {
@@ -491,35 +504,56 @@ async function fetchOpDataFromPage(url, tweetText = '') {
     let html = pageRes.text;
     let finalUrl = pageRes.url;
 
-    console.log('[OPG] Final URL:', finalUrl);
+    const match = html.match(/https?:\/\/[^"' <]+\/(?:op-share|share)\/[a-zA-Z0-9_-]+(?:\?[^"' <]*)?/);
 
-    if (finalUrl.includes('t.co') || !html.includes('og:op:cas')) {
-        const match = html.match(/https:\/\/style\.yh-inc\.jp\/(?:op-share|share)\/[a-zA-Z0-9_-]+[^"' <]*/);
+    if (match) {
+      const expandedUrl = match[0]
+        .replace(/&amp;/g, '&')
+        .replace(/&#038;/g, '&');
 
-      if (match) {
-        console.log('[OPG] Expanded share URL from t.co HTML:', match[0]);
+      console.log('[OPG] Expanded share URL from t.co HTML:', expandedUrl);
 
-        const expandedRes = await fetchViaBackground(match[0]);
-        html = expandedRes.text;
-        finalUrl = expandedRes.url;
+      const expandedRes = await fetchViaBackground(expandedUrl);
+      html = expandedRes.text;
+      finalUrl = expandedRes.url;
 
-        console.log('[OPG] Expanded final URL:', finalUrl);
-      }
+      console.log('[OPG] Expanded final URL:', finalUrl);
+      console.log('[OPG] Expanded HTML has og:op:cas:', html.includes('og:op:cas'));
+      console.log('[OPG] Expanded HTML start:', html.slice(0, 500));
     }
 
   const doc = new DOMParser().parseFromString(html, 'text/html');
 
   const opCasMeta = doc.querySelector('meta[property="og:op:cas"]');
+  console.log('[OPG] opCasMeta:', opCasMeta);
+  console.log('[OPG] opCasMeta content:', opCasMeta?.content);
   const opMeta = doc.querySelector('meta[property="og:op"]');
 
   const blockTextMeta = doc.querySelector('meta[property="og:op:block_text"]');
   const blockHashMeta = doc.querySelector('meta[property="og:op:block_hash"]');
 
-  const originalBlockText = blockTextMeta?.content || '';
+  let originalBlockText = blockTextMeta?.content || '';
+
+  if (!originalBlockText && tweetText) {
+    originalBlockText = tweetText;
+  }
   const originalBlockHash = blockHashMeta?.content || '';
 
   if (opCasMeta && opCasMeta.content) {
-    const casRes = await fetchViaBackground(opCasMeta.content);
+    const casUrl = opCasMeta.content
+      .replace(/&amp;/g, '&')
+      .trim();
+
+    console.log('[OPG] Fetch CAS URL:', casUrl);
+
+    const casRes = await fetchViaBackground(casUrl);
+
+    console.log('[OPG] CAS fetch result:', {
+      url: casRes.url,
+      status: casRes.status,
+      textStart: casRes.text.slice(0, 200)
+    });
+
     const casJson = JSON.parse(casRes.text);
 
     const jwt = Array.isArray(casJson)
@@ -536,9 +570,11 @@ async function fetchOpDataFromPage(url, tweetText = '') {
     const header = decodeJwtHeader(jwt);
 
     console.log('[OPG] JWT header:', header);
-console.log('[OPG] JWT issuer:', payload.issuer);
+    console.log('[OPG] JWT issuer:', payload.issuer);
 
-    const spRes = await fetchViaBackground('https://style.yh-inc.jp/.well-known/sp.json');
+    const spUrl = new URL('/.well-known/sp.json', finalUrl).href;
+    const spRes = await fetchViaBackground(spUrl);
+
     const sp = JSON.parse(spRes.text);
 
     const publicJwk = findPublicJwk(sp);
@@ -600,7 +636,7 @@ function formatDateJa(value) {
 function normalizeCompareText(text) {
   return (text || '')
     .replace(/https?:\/\/\S+/g, '')
-    .replace(/style\.yh-inc\.jp\/\S+/g, '')
+    .replace(/\b[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(?:\/\S*)?/g, '')
     .replace(/[\u200B-\u200D\uFEFF]/g, '')
     .replace(/[“”]/g, '"')
     .replace(/[‘’]/g, "'")
@@ -645,25 +681,34 @@ function detectMeaningFlip(a, b) {
   const aa = normalizeCompareText(a).toLowerCase();
   const bb = normalizeCompareText(b).toLowerCase();
 
-  const negativeWords = [
-    'not',
-    "n't",
-    'cannot',
-    "can't",
-    'never',
-    'no ',
-    'できません',
-    'できない',
-    'ない',
-    'ません',
-    '不可',
-    '否定'
+  const negPatterns = [
+    /not\s+\w+/g,
+    /cannot\s+\w+/g,
+    /can't\s+\w+/g,
+    /never\s+\w+/g,
+    /できません/g,
+    /できない/g,
+    /ではない/g,
+    /じゃない/g,
+    /ありません/g,
+    /ない/g,
+    /ません/g
   ];
 
-  const aNeg = negativeWords.some((w) => aa.includes(w));
-  const bNeg = negativeWords.some((w) => bb.includes(w));
+  const extractNegatives = (text) => {
+    const found = [];
 
-  return aNeg !== bNeg;
+    negPatterns.forEach((re) => {
+      const matches = text.match(re);
+      if (matches) {
+        found.push(...matches);
+      }
+    });
+
+    return found.sort().join('|');
+  };
+
+  return extractNegatives(aa) !== extractNegatives(bb);
 }
 
 function tokenizeForSimilarity(text) {
@@ -685,6 +730,11 @@ function tokenizeForSimilarity(text) {
 function compareSharedText(tweetText, originalText, originalHash) {
   const tweet = normalizeCompareText(tweetText);
   const original = normalizeCompareText(originalText);
+
+  console.log('[OPG] compare tweet:', tweet);
+  console.log('[OPG] compare original:', original);
+  console.log('[OPG] compare score:', textSimilarity(tweet, original));
+  console.log('[OPG] meaningFlip:', detectMeaningFlip(tweet, original));
 
   if (!tweet || !original) {
     return {
@@ -733,11 +783,15 @@ function compareSharedText(tweetText, originalText, originalHash) {
 function extractTweetMainText(tweet) {
   const tweetTextEl = tweet.querySelector('[data-testid="tweetText"]');
 
-  let text = tweetTextEl
-    ? tweetTextEl.innerText
-    : tweet.innerText || '';
+  if (!tweetTextEl) {
+    return normalizeCompareText(tweet.innerText || '');
+  }
 
-  return normalizeCompareText(text);
+  const clone = tweetTextEl.cloneNode(true);
+
+  clone.querySelectorAll('a').forEach((a) => a.remove());
+
+  return normalizeCompareText(clone.innerText || '');
 }
 
 function createXMiniCard(opData) {
@@ -815,34 +869,75 @@ function initBlockShareMode() {
       event.preventDefault();
       event.stopPropagation();
 
-      const hash = await sha256Base64Url(text);
+      const shareBlockText = text.slice(0, 80);
+
+      const hash = await sha256Base64Url(shareBlockText);
 
       const ogTitleMeta = document.querySelector('meta[property="og:title"]');
       const h1Title = document.querySelector('h1');
 
       const pageTitle =
-       (ogTitleMeta && ogTitleMeta.content) ||
-       (h1Title && h1Title.innerText.trim()) ||
+        (ogTitleMeta && ogTitleMeta.content) ||
+        (h1Title && h1Title.innerText.trim()) ||
         document.title ||
         '';
 
       const sourceUrl = location.href.split('#')[0];
 
-      const encodedText = encodeURIComponent(text.slice(0, 180));
+      const encodedText = encodeURIComponent(shareBlockText);
       const encodedTitle = encodeURIComponent(pageTitle);
       const encodedSource = encodeURIComponent(sourceUrl);
       const encodedAuthor = encodeURIComponent('Yoshifumi Takeuchi');
 
+      const metaShareBase = document.querySelector(
+        'meta[property="og:op:share_base"]'
+      );
+
+      if (!metaShareBase?.content) {
+        console.warn('[OPG] og:op:share_base not found');
+        return;
+      }
+
+      const shareBase = metaShareBase.content;
+
+      const opCasMeta = document.querySelector('meta[property="og:op:cas"]');
+      const encodedCas = encodeURIComponent(opCasMeta?.content || '');
+
       const shareUrl =
-        `https://style.yh-inc.jp/op-share/${hash}` +
-        `?text=${encodedText}` +
-        `&title=${encodedTitle}` +
-        `&source=${encodedSource}` +
-        `&author=${encodedAuthor}`;
+        `${shareBase.replace(/\/$/, '')}/${hash}`;
 
-      const shareText = `${text}\n\n${shareUrl}`;
+      const apiUrl =
+        `${shareBase.replace(/\/op-share\/?$/, '')}/wp-json/opg/v1/share`;
 
-      await navigator.clipboard.writeText(shareText);
+      const savePayload = {
+        hash: hash,
+        text: shareBlockText,
+        post_id: postId,
+        cas_url: opCasMeta?.content || '',
+        title: pageTitle,
+        source: sourceUrl,
+        author: 'Yoshifumi Takeuchi'
+      };
+
+      const saveRes = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+         'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(savePayload)
+      });
+
+      if (!saveRes.ok) {
+        console.error('[OPG] Failed to save OP share data:', await saveRes.text());
+        return;
+      }
+
+      const shareText = `${shareBlockText}\n\n${shareUrl}`;
+
+      window.open(
+        `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`,
+        '_blank'
+      );
 
       showSharePopup(el, shareUrl);
     });
