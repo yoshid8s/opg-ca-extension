@@ -6,6 +6,8 @@
 This Chrome extension displays OP/CAS authentication information on sender profile-enabled websites and social networking platforms like X.
 This extension explores how OP/CAS provenance can be inherited across social sharing workflows.
 
+Up until [v0.7.0](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0), it was limited to sites that issued OP/CA through CA Playground, but in [v0.7.0-beta1](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0-beta1), I have confirmed that it also works on OP official websites.
+
 -------
 
 ```mermaid
@@ -210,6 +212,9 @@ This project is an experimental implementation intended to explore:
 
 発信者プロファイル対応ウェブサイトやXなどのSNSプラットフォームでOP/CAS認証情報を表示するChrome拡張機能です。
 この拡張機能では、OP/CASの来歴情報をソーシャル共有ワークフロー全体でどのように継承できるかを検証します。
+
+[v0.7.0](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0)までは、CA PlaygroundでOP/CA発行したサイトのみの限定的なものでしたが、</br>
+[v0.7.0-beta1](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0-beta1) では、OP公式サイトも対象とし、動作することを確認しました。
 
 -------
 
