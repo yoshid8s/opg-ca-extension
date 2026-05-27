@@ -61,7 +61,30 @@
 
     } else {
       console.log('[OPG] og:op / og:op:cas not found');
-      return;
+
+      const siteProfileData = await fetchSiteProfile();
+
+      if (siteProfileData) {
+        opData = siteProfileData;
+      } else {
+        opData = {
+          issuer: 'このサイトは非OPサイトです',
+          author: '-',
+          published: '-',
+          updated: '-',
+          verified: false,
+          status: 'non-op',
+          logo: null,
+          message:
+            'このサイトはOPに対応していません。<br>' +
+            'OPによる発信者確認はできませんが、<br>' +
+            'ドメインの公開登録情報を確認できます。<br><br>' +
+            'このサイトの運営者情報に疑問がある場合は、<br>' +
+            'この画面をクリックして、<br>' +
+            'サイト上に表示されている運営者情報と、<br>' +
+            'ドメインの公開登録情報が一致しているか確認することをおすすめします。'
+        };
+      }
     }
 
     renderCard(opData);
@@ -168,6 +191,73 @@ function normalizeIssuer(issuer) {
     return '-';
   }
 
+  function getSiteFavicon() {
+    return (
+      document.querySelector('link[rel="icon"]')?.href ||
+      document.querySelector('link[rel="shortcut icon"]')?.href ||
+      document.querySelector('link[rel="apple-touch-icon"]')?.href ||
+      `${location.origin}/favicon.ico`
+    );
+  }
+
+  async function fetchSiteProfile() {
+  const hosts = [
+    location.hostname,
+    location.hostname.replace(/^www\./, '')
+  ];
+
+  for (const host of [...new Set(hosts)]) {
+    try {
+      const spUrl = `https://${host}/.well-known/sp.json`;
+      console.log('[OPG] Fetch Site Profile:', spUrl);
+
+      const res = await fetchViaBackground(spUrl);
+      const sp = JSON.parse(res.text);
+
+      const hasBasicStructure =
+        sp &&
+        (
+          sp.credentialSubject ||
+          sp.issuer ||
+          sp.type ||
+          sp['@context'] ||
+          Array.isArray(sp.originators)
+        );
+
+      if (!hasBasicStructure) continue;
+
+      const subject = sp.credentialSubject || {};
+      const originator = Array.isArray(sp.originators) ? sp.originators[0] : null;
+
+      const issuer =
+        sp.issuer ||
+        subject.name ||
+        subject.id ||
+        originator?.name ||
+        originator?.id ||
+        host;
+
+      return {
+        issuer: normalizeIssuer(issuer),
+        author: normalizeAuthor(subject.author || originator?.name),
+        published: subject.datePublished || sp.validFrom || '-',
+        updated: subject.dateModified || sp.validUntil || '-',
+        verified: false,
+        status: 'site-profile',
+        logo: subject.logo || originator?.logo || getSiteFavicon(),
+        message:
+          'このサイトでは OP Site Profile が公開されています。<br>' +
+          '発信者情報を参照できます。<br><br>' +
+          'ただし、このページ単位の Content Attestation は確認できませんでした。'
+      };
+    } catch (e) {
+      console.log('[OPG] Site Profile fetch failed:', host, e);
+    }
+  }
+
+  return null;
+}
+
   function renderCard(opData) {
     const existing = document.getElementById('opg-ca-card');
     if (existing) existing.remove();
@@ -176,21 +266,37 @@ function normalizeIssuer(issuer) {
     card.id = 'opg-ca-card';
 
     const logoUrl = chrome.runtime.getURL('op-logo.png');
-    const issuerLogoUrl = chrome.runtime.getURL('yh_logo.png');
+    const fallbackIssuerLogoUrl = chrome.runtime.getURL('default-logo.png');
+    const issuerLogoUrl = opData.logo || fallbackIssuerLogoUrl;
 
     const verified = opData.verified === true;
+    const isNonOp = opData.status === 'non-op';
 
     let statusClass = 'opg-detected';
 
     if (opData.status === 'validated') {
-        statusClass = 'opg-validated';
+      statusClass = 'opg-validated';
     }
 
     if (opData.verified === true) {
-        statusClass = 'opg-verified';
+      statusClass = 'opg-verified';
     }
 
-    const statusText = getStatusLabel(opData);
+    if (isNonOp) {
+      statusClass = 'opg-nonop';
+    }
+
+    const statusText = isNonOp
+      ? 'OPによる発信者情報は確認できません'
+      : getStatusLabel(opData);
+
+    const messageHtml = opData.message
+      ? opData.message
+      : 'この投稿内容は、上記発信者のWebページにあるものと同一で、文章の改ざんはされていないことが、OPにより確認できました。';
+
+    const issuerLogoHtml = isNonOp
+      ? `<div class="opg-nonop-icon">?</div>`
+      : `<img src="${issuerLogoUrl}" class="opg-issuer-logo">`;
 
     card.innerHTML = `
       <div class="opg-header ${statusClass}">
@@ -207,7 +313,7 @@ function normalizeIssuer(issuer) {
 
         <div class="opg-issuer">
 
-          <img src="${issuerLogoUrl}" class="opg-issuer-logo">
+          ${issuerLogoHtml}
 
           <div class="opg-title">
             ${opData.issuer || 'Unknown'}
@@ -227,10 +333,41 @@ function normalizeIssuer(issuer) {
         更新日: ${formatDateJa(opData.updated)}
         </div>
 
+        <div class="opg-message">
+          ${messageHtml}
+        </div>
+
       </div>
     `;
 
     document.body.appendChild(card);
+
+    if (opData.status === 'non-op') {
+      card.style.cursor = 'pointer';
+
+      card.addEventListener('click', async () => {
+        const domain = location.hostname.replace(/^www\./, '');
+
+        const favicon =
+          document.querySelector('link[rel="icon"]')?.href ||
+          document.querySelector('link[rel="shortcut icon"]')?.href ||
+          document.querySelector('link[rel="apple-touch-icon"]')?.href ||
+          `${location.origin}/favicon.ico`;
+
+          await chrome.storage.local.set({
+            opgDomainInfo: {
+            domain,
+            url: location.href,
+            title: document.title,
+            favicon
+          }
+        });
+
+        chrome.runtime.sendMessage({
+          type: 'OPEN_OPG_SIDEPANEL'
+        });
+      });
+    }
 
     const toggle = document.createElement('button');
     toggle.id = 'opg-ca-toggle';
@@ -610,12 +747,20 @@ function getStatusLabel(opData) {
     return 'OPによる内容変更検出';
   }
 
+  if (opData.status === 'site-profile') {
+    return 'OP Site Profile 公開済みサイト';
+  }
+
   if (opData.verified === true) {
     return 'OPによる発信者実在性確認済みサイト';
   }
 
   if (opData.status === 'validated') {
     return 'OPによる発信者検証済みサイト';
+  }
+
+  if (opData.status === 'ca-detected') {
+    return 'Content Attestation 検出済みページ';
   }
 
   return 'OPによる発信者情報検出';
@@ -796,7 +941,7 @@ function extractTweetMainText(tweet) {
 
 function createXMiniCard(opData) {
   const opLogoUrl = chrome.runtime.getURL('op-logo.png');
-  const fallbackIssuerLogoUrl = chrome.runtime.getURL('yh_logo.png');
+  const fallbackIssuerLogoUrl = chrome.runtime.getURL('default-logo.png');
 
   const issuerLogoUrl = opData.logo || fallbackIssuerLogoUrl;
 
@@ -846,6 +991,7 @@ function createXMiniCard(opData) {
 
 function initBlockShareMode() {
   console.log('[OPG] Block share mode started');
+  console.log('[OPG] initBlockShareMode start');
 
   if (location.pathname.startsWith('/op-share/')) {
     console.log('[OPG] Block share mode skipped on OP Share page');
@@ -855,6 +1001,8 @@ function initBlockShareMode() {
   const targets = Array.from(
     document.querySelectorAll('p, h1, h2, h3, h4, blockquote')
   );
+
+  console.log('[OPG] share targets found:', targets.length, targets);
 
   targets.forEach((el) => {
     const text = (el.innerText || '').trim();
@@ -895,13 +1043,36 @@ function initBlockShareMode() {
 
       if (!metaShareBase?.content) {
         console.warn('[OPG] og:op:share_base not found');
-        return;
+        console.log('[OPG] selector mode only');
+
+        // return を消す
       }
 
-      const shareBase = metaShareBase.content;
+      let shareBase = null;
+
+      if (!metaShareBase?.content) {
+        console.warn('[OPG] og:op:share_base not found');
+        console.log('[OPG] selector mode only');
+      } else {
+        shareBase = metaShareBase.content;
+      }
 
       const opCasMeta = document.querySelector('meta[property="og:op:cas"]');
       const encodedCas = encodeURIComponent(opCasMeta?.content || '');
+
+      if (!shareBase) {
+        console.log('[OPG] no shareBase, external site share mode');
+
+        const shareText = `${shareBlockText}\n\n${sourceUrl}`;
+
+        window.open(
+          `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`,
+          '_blank'
+        );
+
+        showSharePopup(el, sourceUrl);
+        return;
+      }
 
       const shareUrl =
         `${shareBase.replace(/\/$/, '')}/${hash}`;
@@ -983,4 +1154,80 @@ function showSharePopup(el, shareUrl) {
   }, 3500);
 }
 
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type !== 'OPG_FRAME_CA_FOUND') return;
+
+  console.log('[OPG] CA found in frame:', message.payload);
+
+  renderCard({
+    issuer: location.hostname,
+    author: '-',
+    published: '-',
+    updated: '-',
+    verified: false,
+    status: 'ca-detected',
+    logo: getSiteFavicon(),
+    message:
+      'このページでは Content Attestation 情報が検出されました。<br>' +
+      'ページまたは埋め込みフレーム内に CA 情報があります。<br><br>' +
+      '現在はCA情報の検出段階で、署名検証までは行っていません。'
+  });
+
+  initBlockShareMode();
+});
+
+function scanCasScriptsInMainPage() {
+  if (window.__opgCasDetected) return true;
+
+  const scripts = document.querySelectorAll(
+    'script[type="application/cas+json"],' +
+    'script[type="application/ops+json"],' +
+    'script[type="application/opmeta+json"],' +
+    'script[src][type="application/cas+json"],' +
+    'script[src][type="application/ops+json"],' +
+    'script[src][type="application/opmeta+json"]'
+  );
+
+  if (!scripts.length) return false;
+
+  console.log('[OPG] CA script found in main page:', scripts);
+
+  window.__opgCasDetected = true;
+
+  renderCard({
+    issuer: location.hostname,
+    author: '-',
+    published: '-',
+    updated: '-',
+    verified: false,
+    status: 'ca-detected',
+    logo: getSiteFavicon(),
+    message:
+      'このページでは Content Attestation 情報が検出されました。<br>' +
+      'ページ内に CA 情報があります。<br><br>' +
+      '現在はCA情報の検出段階で、署名検証までは行っていません。'
+  });
+
+  console.log('[OPG] call initBlockShareMode from CA detection');
+
+  setTimeout(() => {
+    initBlockShareMode();
+  }, 1000);
+
+  return true;
+}
+
+scanCasScriptsInMainPage();
+
+const opgCasObserver = new MutationObserver(() => {
+  scanCasScriptsInMainPage();
+});
+
+opgCasObserver.observe(document.documentElement, {
+  childList: true,
+  subtree: true
+
+});
+
 })();
+

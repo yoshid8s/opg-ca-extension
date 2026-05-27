@@ -6,12 +6,15 @@
 
   "content_scripts": [
     {
-      "matches": [
-        "https://*/*",
-        "http://*/*"
-      ],
+      "matches": ["https://*/*", "http://*/*"],
       "js": ["content.js"],
       "css": ["style.css"]
+    },
+    {
+      "matches": ["https://*/*", "http://*/*"],
+      "all_frames": true,
+      "match_about_blank": true,
+      "js": ["content-script-all-frames.js"]
     }
   ],
 
@@ -19,8 +22,15 @@
     "service_worker": "background.js"
   },
 
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+
   "permissions": [
-    "scripting"
+    "scripting",
+    "sidePanel",
+    "storage",
+    "tabs"
   ],
 
   "host_permissions": [

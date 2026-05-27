@@ -372,3 +372,25 @@
   opacity: 1;
   transform: translateY(0);
 }
+
+.opg-nonop-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #999;
+  color: white;
+  font-size: 42px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.opg-message {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #ddd;
+  line-height: 1.7;
+  font-size: 13px;
+  color: #444;
+}
