@@ -8,7 +8,8 @@ This extension explores how OP/CAS provenance can be inherited across social sha
 
 Up until [v0.7.0](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0), it was limited to sites that issued OP/CA through CA Playground, but in [v0.7.0-beta1](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0-beta1), I have confirmed that it also works on OP official websites.
 
-Furthermore, I've made UI improvements that include a feature to combat misinformation on non-OP-compatible sites (see image below).
+Furthermore, I've made UI improvements that include a feature to combat misinformation on non-OP-compatible sites (see image below).<br/>
+For more details, please refer to [v0.7.0-beta1 release](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0-beta1).
 
 <br/><br/>
 <img width="1385" height="718" alt="image" src="https://github.com/user-attachments/assets/45e6f67a-95db-46e2-9684-5459c4f46a1a" />
@@ -223,7 +224,8 @@ This project is an experimental implementation intended to explore:
 [v0.7.0](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0)までは、CA PlaygroundでOP/CA発行したサイトのみの限定的なものでしたが、</br>
 [v0.7.0-beta1](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0-beta1) では、OP公式サイトも対象とし、動作することを確認しました。
 
-さらに、非OP対応サイトの偽情報対策機能も追加するUI改善を行なっています（下画像）。
+さらに、非OP対応サイトの偽情報対策機能も追加するUI改善を行なっています（下画像）。<br/>
+詳しくは[v0.7.0-beta1のリリース](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0-beta1)を参照ください。
 <br/><br/>
 <img width="1385" height="718" alt="image" src="https://github.com/user-attachments/assets/45e6f67a-95db-46e2-9684-5459c4f46a1a" />
 <br/><br/>
