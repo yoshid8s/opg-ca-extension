@@ -1,5 +1,5 @@
 🇯🇵For Japanese readers:
-[Jump to Japanese version](https://github.com/yoshid8s/ogp-ca-extension/main/README.md#japanese)
+[Jump to Japanese version](https://github.com/yoshid8s/ogp-ca-extension/blob/main/README.md#japanese)
 
 # OGP CA Extension
 
