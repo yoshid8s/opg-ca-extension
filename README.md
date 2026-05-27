@@ -8,7 +8,7 @@ This extension explores how OP/CAS provenance can be inherited across social sha
 
 Up until [v0.7.0](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0), it was limited to sites that issued OP/CA through CA Playground, but in [v0.7.0-beta1](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0-beta1), I have confirmed that it also works on OP official websites.
 
-Furthermore, I've made UI improvements that include a feature to combat misinformation on non-OP-compatible sites (see diagram below).
+Furthermore, I've made UI improvements that include a feature to combat misinformation on non-OP-compatible sites (see image below).
 
 <br/><br/>
 <img width="1385" height="718" alt="image" src="https://github.com/user-attachments/assets/45e6f67a-95db-46e2-9684-5459c4f46a1a" />
