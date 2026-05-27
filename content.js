@@ -354,6 +354,11 @@ function normalizeIssuer(issuer) {
           document.querySelector('link[rel="apple-touch-icon"]')?.href ||
           `${location.origin}/favicon.ico`;
 
+          if (!chrome?.storage?.local) {
+            console.log('[OPG] chrome.storage.local not available');
+            return;
+          }
+
           await chrome.storage.local.set({
             opgDomainInfo: {
             domain,
@@ -1042,7 +1047,7 @@ function initBlockShareMode() {
       );
 
       if (!metaShareBase?.content) {
-        console.warn('[OPG] og:op:share_base not found');
+        console.log('[OPG] og:op:share_base not found');
         console.log('[OPG] selector mode only');
 
         // return を消す
@@ -1051,7 +1056,7 @@ function initBlockShareMode() {
       let shareBase = null;
 
       if (!metaShareBase?.content) {
-        console.warn('[OPG] og:op:share_base not found');
+        console.log('[OPG] og:op:share_base not found');
         console.log('[OPG] selector mode only');
       } else {
         shareBase = metaShareBase.content;
