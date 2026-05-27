@@ -223,7 +223,7 @@ This project is an experimental implementation intended to explore:
 [v0.7.0](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0)までは、CA PlaygroundでOP/CA発行したサイトのみの限定的なものでしたが、</br>
 [v0.7.0-beta1](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0-beta1) では、OP公式サイトも対象とし、動作することを確認しました。
 
-さらに、非OP対応サイトの偽情報対策機能も追加するUI改善を行なっています（下図）。
+さらに、非OP対応サイトの偽情報対策機能も追加するUI改善を行なっています（下画像）。
 <br/><br/>
 <img width="1385" height="718" alt="image" src="https://github.com/user-attachments/assets/45e6f67a-95db-46e2-9684-5459c4f46a1a" />
 <br/><br/>
