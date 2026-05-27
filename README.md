@@ -1,5 +1,5 @@
 🇯🇵For Japanese readers:
-[Jump to Japanese version](#japanese)
+[Jump to Japanese version](https://github.com/yoshid8s/ogp-ca-extension/edit/main/README.md#japanese)
 
 # OGP CA Extension
 
@@ -7,6 +7,13 @@ This Chrome extension displays OP/CAS authentication information on sender profi
 This extension explores how OP/CAS provenance can be inherited across social sharing workflows.
 
 Up until [v0.7.0](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0), it was limited to sites that issued OP/CA through CA Playground, but in [v0.7.0-beta1](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0-beta1), I have confirmed that it also works on OP official websites.
+
+Furthermore, I've made UI improvements that include a feature to combat misinformation on non-OP-compatible sites (see diagram below).
+
+<br/>
+<img width="1385" height="718" alt="image" src="https://github.com/user-attachments/assets/45e6f67a-95db-46e2-9684-5459c4f46a1a" />
+
+<br/><br/>
 
 -------
 
@@ -215,6 +222,11 @@ This project is an experimental implementation intended to explore:
 
 [v0.7.0](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0)までは、CA PlaygroundでOP/CA発行したサイトのみの限定的なものでしたが、</br>
 [v0.7.0-beta1](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0-beta1) では、OP公式サイトも対象とし、動作することを確認しました。
+
+さらに、非OP対応サイトの偽情報対策機能も追加するUI改善を行なっています（下図）。
+<br/>
+<img width="1385" height="718" alt="image" src="https://github.com/user-attachments/assets/45e6f67a-95db-46e2-9684-5459c4f46a1a" />
+<br/><br/>
 
 -------
 
