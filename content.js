@@ -4,7 +4,6 @@
 
     if (isX) {
         initXTimelineMode();
-        return;
     }
 
     const hasOpMeta =
@@ -67,23 +66,112 @@
       if (siteProfileData) {
         opData = siteProfileData;
       } else {
-        opData = {
-          issuer: 'このサイトは非OPサイトです',
-          author: '-',
-          published: '-',
-          updated: '-',
-          verified: false,
-          status: 'non-op',
-          logo: null,
-          message:
-            'このサイトはOPに対応していません。<br>' +
-            'OPによる発信者確認はできませんが、<br>' +
-            'ドメインの公開登録情報を確認できます。<br><br>' +
-            'このサイトの運営者情報に疑問がある場合は、<br>' +
-            'この画面をクリックして、<br>' +
-            'サイト上に表示されている運営者情報と、<br>' +
-            'ドメインの公開登録情報が一致しているか確認することをおすすめします。'
-        };
+
+        const hostname = location.hostname;
+
+        let platformType = 'non-op';
+
+        if (
+          hostname.includes('youtube.com') ||
+          hostname.includes('youtu.be') ||
+          hostname.includes('tiktok.com')
+        ) {
+          platformType = 'platform-video';
+
+        } else if (
+          hostname.includes('x.com') ||
+          hostname.includes('twitter.com') ||
+          hostname.includes('facebook.com') ||
+          hostname.includes('fb.com') ||
+          hostname.includes('instagram.com') ||
+          hostname.includes('threads.com') ||
+          hostname.includes('reddit.com')
+        ) {
+          platformType = 'platform-social';
+
+        } else if (
+          hostname.includes('note.com')
+        ) {
+          platformType = 'platform-community';
+        }
+
+        if (platformType === 'platform-video') {
+          // YouTube / TikTok 用
+          opData = {
+            issuer: '動画共有プラットフォーム（OP未対応）',
+            author: '-',
+            published: '-',
+            updated: '-',
+            verified: false,
+            status: 'non-op',
+            logo: null,
+            message:
+              '動画共有プラットフォームでは、多くのクリエーターが動画を発信しています。<br>' +
+              '発信者確認やコンテンツの信頼性判断は、<br>' +
+              'プラットフォームの仕組みや利用者自身の確認に依存しています。<br><br>' +
+              'OPが動画共有プラットフォームで、<br>' +
+              'どのように発信者確認やコンテンツ真正性を支援できるかは、<br>' +
+              '今後の検討領域です。<br>'
+          };
+        }
+        else if (platformType === 'platform-social') {
+          // X / FB / Insta / Threads / Reddit 用
+          opData = {
+            issuer: 'SNSプラットフォーム（OP未対応）',
+            author: '-',
+            published: '-',
+            updated: '-',
+            verified: false,
+            status: 'non-op',
+            logo: null,
+            message:
+              'SNSでは、多くの人がリアルタイムに情報発信しています。<br><br>' +
+              '情報の信頼性判断は、<br>' +
+              '利用者自身による確認や、<br>' +
+              '各プラットフォームの仕組みに依存しています。<br><br>' +
+              'OPがSNSにおける発信者確認や<br>' +
+              '情報真正性確認をどのように支援できるかは、<br>' +
+              '今後の検討領域です。<br>'
+          };
+        }
+        else if (platformType === 'platform-community') {
+          // note 用
+          opData = {
+            issuer: 'ブログ・コミュニティプラットフォーム（OP未対応）',
+            author: '-',
+            published: '-',
+            updated: '-',
+            verified: false,
+            status: 'non-op',
+            logo: null,
+            message:
+              'ブログやコミュニティサービスでは、<br>' +
+              '個人や組織が自由に情報発信しています。<br><br>' +
+              '発信者確認やコンテンツ真正性確認は、<br>' +
+              'サービス提供者や利用者の判断に依存しています。<br><br>' +
+              'OPがコミュニティサービスをどのように支援できるかは、<br>' +
+              '今後の検討領域です。<br>'
+          };
+        }
+        else {
+          opData = {
+            issuer: 'このサイトは非OPサイトです',
+            author: '-',
+            published: '-',
+            updated: '-',
+            verified: false,
+            status: 'non-op',
+            logo: null,
+            message:
+              'このサイトはOPに対応していません。<br>' +
+              'OPによる発信者確認はできませんが、<br>' +
+              'ドメインの公開登録情報を確認できます。<br><br>' +
+              'このサイトの運営者情報に疑問がある場合は、<br>' +
+              'この画面をクリックして、<br>' +
+              'サイト上に表示されている運営者情報と、<br>' +
+              'ドメインの公開登録情報が一致しているか確認することをおすすめします。'
+          };
+        }
       }
     }
 
@@ -326,12 +414,28 @@ function normalizeIssuer(issuer) {
         </div>
 
         <div class="opg-item">
+          編集者: ${opData.editor || '-'}
+        </div>
+
+        <div class="opg-item">
          公開日: ${formatDateJa(opData.published)}
         </div>
 
         <div class="opg-item">
         更新日: ${formatDateJa(opData.updated)}
         </div>
+
+        ${opData.genre ? `
+          <div class="opg-item">
+            ジャンル: ${opData.genre}
+          </div>
+        ` : ''}
+
+        ${opData.description ? `
+          <div class="opg-item opg-description">
+            説明: ${opData.description}
+          </div>
+        ` : ''}
 
         <div class="opg-message">
           ${messageHtml}
@@ -664,7 +768,33 @@ async function fetchOpDataFromPage(url, tweetText = '') {
       console.log('[OPG] Expanded HTML start:', html.slice(0, 500));
     }
 
+
+  function extractFaviconFromDoc(doc, finalUrl) {
+  const iconEl =
+    doc.querySelector('link[rel~="icon"][sizes]') ||
+    doc.querySelector('link[rel~="apple-touch-icon"]') ||
+    doc.querySelector('link[rel~="icon"]') ||
+    doc.querySelector('link[rel~="shortcut icon"]');
+
+  const iconHref = iconEl?.getAttribute('href');
+
+  if (iconHref) {
+    return new URL(iconHref, finalUrl).href;
+  }
+
+  return new URL('/favicon.ico', finalUrl).href;
+  }
+  
   const doc = new DOMParser().parseFromString(html, 'text/html');
+
+  console.log(
+    '[OPG] icon tags:',
+      Array.from(doc.querySelectorAll('link[rel*="icon"]'))
+      .map(x => x.outerHTML)
+  );
+
+  const favicon = extractFaviconFromDoc(doc, finalUrl);
+  console.log('[OPG] favicon:', favicon);
 
   const opCasMeta = doc.querySelector('meta[property="og:op:cas"]');
   console.log('[OPG] opCasMeta:', opCasMeta);
@@ -735,7 +865,7 @@ async function fetchOpDataFromPage(url, tweetText = '') {
         updated: subject.dateModified || subject.updated || '-',
         verified: isVerified,
         status: isVerified ? 'verified' : 'validated',
-        logo: subject.logo || null,
+        logo: favicon || subject.logo || null,
         comparison: comparison
     };
   }
@@ -1174,7 +1304,7 @@ chrome.runtime.onMessage.addListener((message) => {
     logo: getSiteFavicon(),
     message:
       'このページでは Content Attestation 情報が検出されました。<br>' +
-      'ページまたは埋め込みフレーム内に CA 情報があります。<br><br>' +
+      'ページ内に CA 情報があります。<br><br>' +
       '現在はCA情報の検出段階で、署名検証までは行っていません。'
   });
 
@@ -1199,11 +1329,37 @@ function scanCasScriptsInMainPage() {
 
   window.__opgCasDetected = true;
 
+  let caPayload = null;
+
+  try {
+    const firstScript = scripts[0];
+    const rawText = (firstScript.textContent || '').trim();
+
+    let jwt = rawText;
+
+    if (rawText.startsWith('[')) {
+      jwt = JSON.parse(rawText)[0];
+    }
+
+    if (jwt && jwt.includes('.')) {
+      caPayload = decodeJwtPayload(jwt);
+      console.log('[OPG] Decoded embedded CA payload:', caPayload);
+    }
+  } catch (e) {
+    console.log('[OPG] Failed to decode embedded CA:', e);
+  }
+
+  const subject = caPayload?.credentialSubject || {};
+
   renderCard({
-    issuer: location.hostname,
-    author: '-',
-    published: '-',
-    updated: '-',
+    issuer: normalizeIssuer(caPayload?.issuer || location.hostname),
+    headline: subject.headline || '',
+    author: normalizeAuthor(subject.author),
+    editor: normalizeAuthor(subject.editor),
+    published: subject.datePublished || '-',
+    updated: subject.dateModified || '-',
+    genre: subject.genre || '',
+    description: subject.description || '',
     verified: false,
     status: 'ca-detected',
     logo: getSiteFavicon(),
