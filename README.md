@@ -11,7 +11,9 @@ Up until [v0.7.0](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7
 Furthermore, I've made UI improvements that include a feature to combat misinformation on non-OP-compatible sites (see image below).<br/>
 For more details, please refer to [v0.7.0-beta1 release](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0-beta1).
 
-Recent [0.7.1-beta1](https://github.com/yoshid8s/ogp-ca-extension/releases) now distinguishes major platforms and provides context-aware guidance when OP metadata is unavailable to provide a more understandable experience for general users,because users naturally move between websites, SNS platforms, and video platforms.
+As of [0.7.1-beta1](https://github.com/yoshid8s/ogp-ca-extension/releases), the extension distinguishes major platforms and provides context-aware guidance when OP metadata is unavailable.
+
+This change aims to provide a more understandable experience for general users, since people naturally move between websites, SNS platforms, and video platforms.
 
 <br/><br/>
 <img width="1385" height="718" alt="image" src="https://github.com/user-attachments/assets/45e6f67a-95db-46e2-9684-5459c4f46a1a" />
@@ -229,7 +231,9 @@ This project is an experimental implementation intended to explore:
 さらに、非OP対応サイトの偽情報対策機能も追加するUI改善を行なっています（下画像）。<br/>
 詳しくは[v0.7.0-beta1のリリース](https://github.com/yoshid8s/ogp-ca-extension/releases/tag/v0.7.0-beta1)を参照ください。
 
-最新バージョン[0.7.1-beta1](https://github.com/yoshid8s/ogp-ca-extension/releases)では、主要なプラットフォームを区別し、OPメタデータが利用できない場合に状況に応じたガイダンスを提供することで、一般ユーザーにとってより分かりやすいエクスペリエンスを提供します。これは、ユーザーがウェブサイト、SNSプラットフォーム、ビデオプラットフォーム間を自然に移動するためです。
+[0.7.1-beta1](https://github.com/yoshid8s/ogp-ca-extension/releases)では、この拡張機能は主要なプラットフォームを識別し、OPメタデータが利用できない場合に状況に応じたガイダンスを提供するようになりました。
+
+この変更は、ユーザーがウェブサイト、SNSプラットフォーム、動画プラットフォーム間を自然に移動するという現状を踏まえ、一般ユーザーにとってより分かりやすい体験を提供することを目的としています。
 
 <br/><br/>
 <img width="1385" height="718" alt="image" src="https://github.com/user-attachments/assets/45e6f67a-95db-46e2-9684-5459c4f46a1a" />
